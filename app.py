@@ -6,10 +6,11 @@ from scipy.sparse import csr_matrix
 # ================================
 # Load Saved Hybrid Model Artifact
 # ================================
+
 ART_PATH = "hybrid_recommender_custom.json"
 
 with open(ART_PATH, "r", encoding="utf-8") as f:
-    art = json.load(f)
+    art = json.load(f)   # <-- indented properly
 
 # Extract stored components
 gmean = art["global_mean"]
@@ -20,12 +21,27 @@ best_alpha = art["best_alpha"]
 user_mean = np.array(art["user_mean"])
 item_mean = np.array(art["item_mean"])
 
-R_data = np.array(art["R_matrix"]["data"])
-R_indices = np.array(art["R_matrix"]["indices"])
-R_indptr = np.array(art["R_matrix"]["indptr"])
-R_shape = tuple(art["R_matrix"]["shape"])
+# Debugging: check keys
+print("Keys in artifact:", art.keys())
 
-Rmat = csr_matrix((R_data, R_indices, R_indptr), shape=R_shape)
+# ================================
+# Reconstruct the CSR matrix
+# ================================
+
+R_csr_data = art.get("R_csr")
+if R_csr_data is None:
+    raise KeyError("R_csr key not found in the artifact. Available keys: " + str(list(art.keys())))
+else:
+    R_data = np.array(R_csr_data["data"])
+    R_indices = np.array(R_csr_data["indices"])
+    R_indptr = np.array(R_csr_data["indptr"])
+    R_shape = tuple(R_csr_data["shape"])
+    Rmat = csr_matrix((R_data, R_indices, R_indptr), shape=R_shape)
+    print("R_csr matrix loaded successfully, shape:", Rmat.shape)
+
+# ================================
+# User and Item IDs
+# ================================
 
 user_ids = art["user_ids"]
 item_ids = art["item_ids"]
@@ -37,6 +53,7 @@ i_to_idx = {m: i for i, m in enumerate(item_ids)}
 # ================================
 # Hybrid Prediction Function
 # ================================
+
 def hybrid_predict(user, anime):
     """
     Predict rating using:
@@ -65,6 +82,7 @@ def hybrid_predict(user, anime):
 # ================================
 # Streamlit App UI
 # ================================
+
 st.set_page_config(page_title="Anime Rating Predictor", page_icon="🎌")
 
 st.title("🎌 Anime Hybrid Rating Predictor")
@@ -77,7 +95,6 @@ anime_selected = st.selectbox("Select Anime ID", item_ids)
 # Prediction Button
 if st.button("Predict Rating"):
     pred = hybrid_predict(user_selected, anime_selected)
-
     if pred is None:
         st.error("⚠️ User or Anime not found in model.")
     else:
@@ -85,4 +102,4 @@ if st.button("Predict Rating"):
 
 # Footer
 st.markdown("---")
-st.caption("Built with a Hybrid Recommendation Model • Streamlit UI")
+st.caption("Built by Mahen • Streamlit UI")
