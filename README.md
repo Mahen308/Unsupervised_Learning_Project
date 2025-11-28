@@ -85,12 +85,9 @@ pip install -r requirements.txt
 
 | Name                                                                                        |  Email              
 |---------------------------------------------------------------------------------------------|--------------------             
-| [Team Member 1](https://github.com/<username>)                                              | team_member_email@example.com
+| [Team Member 1](https://github.com/<Mahen308>)                                              | team_member_mahen308@gmail.com
 
 
 
-#### Additional Resources to create a README file:
-- [Make a README](https://www.makeareadme.com/)
-- [GitHub Docs](https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-readmes)
-- [FreeCodeCamp](https://www.freecodecamp.org/news/how-to-write-a-good-readme-file/)
+
 
